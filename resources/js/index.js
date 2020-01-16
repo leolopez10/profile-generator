@@ -53,29 +53,31 @@ inquirer
         // create variables for api and store user inputs
         //=================================================
         const gitHubLogin = userInput.username;
+        const gitHubJSON = gitHubLogin + ".json";
         const color = userInput.color;
-        const queryUrl = "https://api.github.com/users/" + gitHubLogin;
-        const queryStarUrl = "https://api.github.com/users/" + gitHubLogin + "/starred";
 
-        //====================================================
-        //Run gitHubData function to retrieve user information
-        //====================================================
-        gitHubData(queryUrl);
+        //================================================
+        //Write a function that will create a new document
+        //================================================
+        fs.writeFile(gitHubJSON, JSON.stringify(userInput, null, '\t'), function(err) {
+            if (err) {
+                return console.log(err);
+            }
 
-        //=====================================================
-        //Run gitHubStars function to get remaining github data
-        //=====================================================
-        gitHubStars(queryStarUrl);
-        // let gitUserNameJSON = userInput.username.split(" ").join("") + ".json"
-        // console.log(gitUserNameJSON);
+            const queryUrl = "https://api.github.com/users/" + gitHubLogin;
+            const queryStarUrl = "https://api.github.com/users/" + gitHubLogin + "/starred";
+            //====================================================
+            //Run gitHubData function to retrieve user information
+            //====================================================
+            gitHubData(queryUrl);
 
-        // const queryUrl = ""
-        // writeFileAsync(gitHubUserName, JSON.stringify(userInput, null, "\t"), function(err){
-        //     if(err){
-        //         return console.log(err);
-        //     }
+            //=====================================================
+            //Run gitHubStars function to get remaining github data
+            //=====================================================
+            gitHubStars(queryStarUrl);
 
-        // })
+        });
+
     });
 
 function gitHubStars(queryStarUrl) {
@@ -104,15 +106,16 @@ function gitHubData(queryUrl) {
             let numberOfRepos = res.data.public_repos;
             let numberOfFollowers = res.data.followers;
             let numberOfFollowing = res.data.following;
-            //missing github stars
             console.log(profileImg, userName, userLocation, userGitProfile, userBlog, userBio, numberOfRepos, numberOfFollowers, numberOfFollowing);
+
+
         })
         .catch(function(err) {
             console.log(err);
         })
-
-
 }
+
+
 
 // .then(function({ username }) {
 //     const queryUrl = `https://api.github.com/users/${username}/repos?per_page=100`;
