@@ -7,18 +7,11 @@ const util = require("util");
 const axios = require("axios");
 const puppeteer = require("puppeteer")
 const generator = require("./generateHTML");
-// const puppter = require("html-pdf")
-
 
 //===========//
 // Promises                            
 //===========//
-
-const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
-const appendFileAsync = util.promisify(fs.appendFile);
-
-
 
 //=======================================================
 //  Prompt user to get github username and favorite color                 
@@ -44,7 +37,7 @@ function promptUser() {
 }
 
 //=======================================================
-//  Prompt user to get github username and favorite color                 
+//organize all the information I want into one object               
 //=======================================================
 function dataToObject(userInfo, userStars, inputName, userColor) {
     return data = {
@@ -89,14 +82,14 @@ async function init() {
     try {
         //Ask user git hub questions
         const userInput = await promptUser();
+        //Store every answer
         const inputName = userInput.name
         const gitHubLogin = userInput.username;
         const userColor = userInput.color;
         const fileNameHTML = gitHubLogin + ".html";
         const fileNamePDF = gitHubLogin + ".pdf";
-        // const fileURL = `file:///C:/Users/Leo/Documents/UT-Coding-Course/homework/profile-generator/resources/js/${fileNameHTML}`
 
-        //GET github user information and store them with promises
+        //GET github user information and store them as an array of promises
         const res = await Promise.all(
             [
                 axios.get(`https://api.github.com/users/${gitHubLogin}`),
@@ -104,10 +97,10 @@ async function init() {
             ]
         );
 
-        //After successful GET store urls in an array for later
+        //After successful GET: store responses to an array (use map to make  res.data and store into array)
         const [userInfo, userStars] = res.map(res => res.data);
 
-        //Take all the data from the responses and organize it into an object
+        //Convert all the data from the GET promises and user responses into one object
         data = dataToObject(userInfo, userStars, inputName, userColor);
 
         //Make html template with all the data collected in object print
