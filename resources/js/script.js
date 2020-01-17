@@ -5,6 +5,7 @@ const fs = require("fs");
 const inquirer = require("inquirer");
 const util = require("util");
 const axios = require("axios");
+const puppeteer = require("puppeteer")
 const generator = require("./generateHTML");
 // const puppter = require("html-pdf")
 
@@ -62,6 +63,22 @@ function dataToObject(userInfo, userStars, inputName, userColor) {
     }
 }
 
+//======================================
+//function to write html to pdf
+//======================================
+async function HTMLtoPDF(html, fileNamePDF) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 });
+    await page.setContent(html);
+    await page.pdf({
+        path: fileNamePDF,
+        format: "A4",
+    });
+
+    await browser.close();
+}
+
 //====================================
 //init function to run the whole thing
 //====================================
@@ -77,6 +94,7 @@ async function init() {
         const userColor = userInput.color;
         const fileNameHTML = gitHubLogin + ".html";
         const fileNamePDF = gitHubLogin + ".pdf";
+        // const fileURL = `file:///C:/Users/Leo/Documents/UT-Coding-Course/homework/profile-generator/resources/js/${fileNameHTML}`
 
         //GET github user information and store them with promises
         const res = await Promise.all(
@@ -96,18 +114,14 @@ async function init() {
         html = generator.generateHTML(data);
 
         //make an html file
-        writeFileAsync(fileNameHTML, html, err => {
+        writeFileAsync(fileNameHTML, html, function(err) {
             if (err) {
                 throw err;
-            };
+            }
+            return fileNameHTML;
         });
         //make a pdf file
-        // writeFileAsync(fileNamePDF, puppet, err => {
-        //     if (err) {
-        //         throw err;
-        //     }
-        // });
-        // console.log(html);
+        HTMLtoPDF(fileNameHTML, fileNamePDF);
         console.log(" log is successful")
 
 
