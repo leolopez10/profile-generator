@@ -121,7 +121,9 @@ async function init() {
             return fileNameHTML;
         });
         //make a pdf file
-        HTMLtoPDF(fileNameHTML, fileNamePDF);
+        HTMLtoPDF(html, fileNamePDF);
+
+        //log success
         console.log(" log is successful")
 
 
