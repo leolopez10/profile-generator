@@ -17,6 +17,8 @@ const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
 const appendFileAsync = util.promisify(fs.appendFile);
 
+
+
 //=======================================================
 //  Prompt user to get github username and favorite color                 
 //=======================================================
@@ -43,8 +45,9 @@ function promptUser() {
 //=======================================================
 //  Prompt user to get github username and favorite color                 
 //=======================================================
-function dataToObject(userInfo, userStars, userColor) {
+function dataToObject(userInfo, userStars, inputName, userColor) {
     return data = {
+        name: inputName,
         profileImg: userInfo.avatar_url + ".png",
         userName: userInfo.login,
         userLocation: userInfo.location,
@@ -65,13 +68,15 @@ function dataToObject(userInfo, userStars, userColor) {
 async function init() {
     console.log("================================STARTING========================")
     let data = {};
-    let fileName;
 
     try {
         //Ask user git hub questions
         const userInput = await promptUser();
+        const inputName = userInput.name
         const gitHubLogin = userInput.username;
         const userColor = userInput.color;
+        const fileNameHTML = gitHubLogin + ".html";
+        const fileNamePDF = gitHubLogin + ".pdf";
 
         //GET github user information and store them with promises
         const res = await Promise.all(
@@ -85,11 +90,24 @@ async function init() {
         const [userInfo, userStars] = res.map(res => res.data);
 
         //Take all the data from the responses and organize it into an object
-        data = dataToObject(userInfo, userStars, userColor);
+        data = dataToObject(userInfo, userStars, inputName, userColor);
 
-        //Make html file with all the data collected in object
+        //Make html template with all the data collected in object print
         html = generator.generateHTML(data);
-        console.log(html);
+
+        //make an html file
+        writeFileAsync(fileNameHTML, html, err => {
+            if (err) {
+                throw err;
+            };
+        });
+        //make a pdf file
+        // writeFileAsync(fileNamePDF, puppet, err => {
+        //     if (err) {
+        //         throw err;
+        //     }
+        // });
+        // console.log(html);
         console.log(" log is successful")
 
 
