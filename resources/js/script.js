@@ -12,6 +12,7 @@ const generator = require("./generateHTML");
 // Promises                            
 //===========//
 const writeFileAsync = util.promisify(fs.writeFile);
+const readFileAsync = util.promisify(fs.readFile);
 
 //=======================================================
 //  Prompt user to get github username and favorite color                 
@@ -88,6 +89,7 @@ async function init() {
         const userColor = userInput.color;
         const fileNameHTML = gitHubLogin + ".html";
         const fileNamePDF = gitHubLogin + ".pdf";
+        console.log("storing answers...")
 
         //GET github user information and store them as an array of promises
         const res = await Promise.all(
@@ -97,27 +99,31 @@ async function init() {
             ]
         );
 
-        //After successful GET: store responses to an array (use map to make  res.data and store into array)
+        //After successful GET: store responses to an array (use map to make the values equal  res.data and store into array)
         const [userInfo, userStars] = res.map(res => res.data);
+        console.log("Fetching github data...");
 
         //Convert all the data from the GET promises and user responses into one object
         data = dataToObject(userInfo, userStars, inputName, userColor);
+        console.log("Organizing data...");
 
         //Make html template with all the data collected in object print
         html = generator.generateHTML(data);
+        console.log("Pasting data into html documents...")
 
         //make an html file
-        writeFileAsync(fileNameHTML, html, function(err) {
-            if (err) {
-                throw err;
-            }
-            return fileNameHTML;
-        });
+        writeFileAsync(fileNameHTML, html, err => err ? err : fileNameHTML);
+        console.log("writing html file...");
+
         //make a pdf file
         HTMLtoPDF(html, fileNamePDF);
+        console.log("converting html file into pdf file...");
+
+        //make a read file
+
 
         //log success
-        console.log(" log is successful")
+        console.log("successfully created developer profile");
 
 
     } catch (err) {
