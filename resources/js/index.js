@@ -1,11 +1,11 @@
 //=======================//
 // Node Packet Managment               
 //=======================//
-const inquirer = require("inquirer");
 const fs = require("fs");
-const axios = require("axios");
+const inquirer = require("inquirer");
 const util = require("util");
-const generateHTML = require("./generateHTML");
+const axios = require("axios");
+const generator = require("./generateHTML");
 // const HTMLtoPDF = require("html-pdf")
 
 
@@ -22,17 +22,18 @@ const appendFileAsync = util.promisify(fs.appendFile);
 // These are constant variable that we will need to develop our PDF file                 
 //========================================================================//
 let userInfo;
-
-let profileImg;
-let userName;
-let userLocation;
-let userGitProfile;
-let userBlog;
-let userBio;
-let numberOfRepos;
-let numberOfFollowers;
-let numberOfFollowing;
 let userStars;
+
+// let profileImg;
+// let userName;
+// let userLocation;
+// let userGitProfile;
+// let userBlog;
+// let userBio;
+// let numberOfRepos;
+// let numberOfFollowers;
+// let numberOfFollowing;
+
 
 //=======================================================
 //  Prompt user to get github username and favorite color                 
@@ -41,18 +42,22 @@ function promptUser() {
     return inquirer.prompt([{
             type: "input",
             message: "Enter your GitHub username:",
-            name: "username"
+            name: "username",
         },
         {
             type: "rawlist",
             message: "pick a color",
-            choices: ["green", "blue", "pink", "red"],
-            name: "color"
+            choices: Object.keys(generator.colors),
+            name: "color",
         }
     ])
 }
 
+
 function gitHubData(queryUrl) {
+
+
+    //getting github infomration
     axios
         .get(queryUrl)
         .then(function(res) {
@@ -75,6 +80,8 @@ function gitHubData(queryUrl) {
         .catch(function(err) {
             console.log(err);
         })
+
+
 }
 
 function gitHubStars(queryStarUrl) {
@@ -92,20 +99,37 @@ function gitHubStars(queryStarUrl) {
 
 
 
+
+
+
+
+
+
 promptUser()
     .then(function(userInput) {
         //================================================
-        // create variables for api and store user inputs
+        // create new pdf file
         //=================================================
         // console.log(userInput);
-        const gitHubLogin = userInput.username;
-        const gitHubJSON = gitHubLogin + ".json";
-        const color = userInput.color;
-        // const html = generateHTML.generateHTML(userInfo, profileImg, userName, userLocation, userGitProfile, userBlog, userBio, numberOfRepos, numberOfFollowers, numberOfFollowing, userStars);
+        const fileNamePDF = userInput.username.toLowerCase().split('').join("") + ".pdf";
+        const fileNameHTML = userInput.username.toLowerCase().split('').join("") + ".html";
+
+        // const userInputData = generator.generateHTML(userInput, userInfo);
+
+        // const html = generatorHTML.generateHTML(userInfo, profileImg, userName, userLocation, userGitProfile, userBlog, userBio, numberOfRepos, numberOfFollowers, numberOfFollowing, userStars);
 
         //================================================
         //Write a function that will create a new document
         //================================================
+        // writeFileAsync(fileNameHTML, userInputData, "utf8", function(err) {
+        //     if (err) {
+        //         console.log(err);
+        //     }
+
+        console.log("success");
+        const gitHubLogin = userInput.username;
+        const color = userInput.color;
+
 
 
         //===============
@@ -118,20 +142,27 @@ promptUser()
         //Run gitHubData function to retrieve user information
         //====================================================
         gitHubData(queryUrl);
+        gitHubStars(queryStarUrl);
+        // })
 
         //=====================================================
         //Run gitHubStars function to get remaining github data
         //=====================================================
-        gitHubStars(queryStarUrl);
+        // gitHubStars(queryStarUrl);
 
         //=======================
         //Generate HTML Document
         //=======================
 
 
+
     });
-
-
+//====================================
+//init function to run the whole thing
+//====================================
+async function init() {
+    let data = {};
+}
 
 
 // writeFileAsync(gitHubJSON, JSON.stringify(userInput, null, '\t'), function(err) {

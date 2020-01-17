@@ -1,32 +1,32 @@
-// const colors = {
-//     green: {
-//         wrapperBackground: "#E6E1C3",
-//         headerBackground: "#C1C72C",
-//         headerColor: "black",
-//         photoBorderColor: "#black"
-//     },
-//     blue: {
-//         wrapperBackground: "#5F64D3",
-//         headerBackground: "#26175A",
-//         headerColor: "white",
-//         photoBorderColor: "#73448C"
-//     },
-//     pink: {
-//         wrapperBackground: "#879CDF",
-//         headerBackground: "#FF8374",
-//         headerColor: "white",
-//         photoBorderColor: "#FEE24C"
-//     },
-//     red: {
-//         wrapperBackground: "#DE9967",
-//         headerBackground: "#870603",
-//         headerColor: "white",
-//         photoBorderColor: "white"
-//     }
-// };
+const colors = {
+    green: {
+        wrapperBackground: "#E6E1C3",
+        headerBackground: "#C1C72C",
+        headerColor: "black",
+        photoBorderColor: "#black"
+    },
+    blue: {
+        wrapperBackground: "#5F64D3",
+        headerBackground: "#26175A",
+        headerColor: "white",
+        photoBorderColor: "#73448C"
+    },
+    pink: {
+        wrapperBackground: "#879CDF",
+        headerBackground: "#FF8374",
+        headerColor: "white",
+        photoBorderColor: "#FEE24C"
+    },
+    red: {
+        wrapperBackground: "#DE9967",
+        headerBackground: "#870603",
+        headerColor: "white",
+        photoBorderColor: "white"
+    }
+};
 
 
-function generateHTML(userInfo, profileImg, userName, userLocation, userGitProfile, userBlog, userBio, numberOfRepos, numberOfFollowers, numberOfFollowing, userStars) {
+function generateHTML(data) {
     // function generateHTML(userInfo) {
     return `<!DOCTYPE html>
     <html lang="en">
@@ -34,7 +34,7 @@ function generateHTML(userInfo, profileImg, userName, userLocation, userGitProfi
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <meta http-equiv="X-UA-Compatible" conent="ie=edge" />
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
@@ -61,15 +61,12 @@ function generateHTML(userInfo, profileImg, userName, userLocation, userGitProfi
             
             html,
             body,
-            .wrapper {
+            .wrapper 
                 height: 100%;
             }
             
             .wrapper {
-                background-color: $ {
-                    colors[data.color].wrapperBackground
-                }
-                ;
+                background-color: ${colors[data.color].wrapperBackground};
                 padding-top: 100px;
             }
             
@@ -126,14 +123,8 @@ function generateHTML(userInfo, profileImg, userName, userLocation, userGitProfi
                 display: flex;
                 justify-content: center;
                 flex-wrap: wrap;
-                background-color: $ {
-                    colors[data.color].headerBackground
-                }
-                ;
-                color: $ {
-                    colors[data.color].headerColor
-                }
-                ;
+                background-color: ${colors[data.color].headerBackground};
+                color: ${colors[data.color].headerColor};
                 padding: 10px;
                 width: 95%;
                 border-radius: 6px;
@@ -145,10 +136,7 @@ function generateHTML(userInfo, profileImg, userName, userLocation, userGitProfi
                 border-radius: 50%;
                 object-fit: cover;
                 margin-top: -75px;
-                border: 6px solid $ {
-                    colors[data.color].photoBorderColor
-                }
-                ;
+                border: 6px solid ${colors[data.color].photoBorderColor};
                 box-shadow: rgba(0, 0, 0, 0.3) 4px 1px 20px 4px;
             }
             
@@ -198,14 +186,8 @@ function generateHTML(userInfo, profileImg, userName, userLocation, userGitProfi
             .card {
                 padding: 20px;
                 border-radius: 6px;
-                background-color: $ {
-                    colors[data.color].headerBackground
-                }
-                ;
-                color: $ {
-                    colors[data.color].headerColor
-                }
-                ;
+                background-color: ${colors[data.color].headerBackground};
+                color: ${colors[data.color].headerColor};
                 margin: 20px;
             }
             
@@ -232,28 +214,28 @@ function generateHTML(userInfo, profileImg, userName, userLocation, userGitProfi
             <div class="col">
                 <header>
                     <div class="photo-header">
-                        <img src=${userInfo.profileImg}>
+                        <img src=${data.profileImg}>
                         <h1>Hi!</h1>
-                        <h2>My GitHub username is ${userInfo.userName}</h2>
-                        <p>${userInfo.userLocation}</p>
+                        <h2>My GitHub username is ${data.userName}</h2>
+                        <p>${data.userLocation}</p>
                     </div>
                 </header>
             </div>
             <main class="container">
                 <div class="col">
-                    <h3>${userInfo.userBio}</h3>
+                    <h3>${data.userBio}</h3>
                 </div>
                 <div class="row">
                     <div class="col">
                         <div class="card">
                             <h6>Public Repositories</h6>
-                            <p>${userInfo.numberOfRepos}</p>
+                            <p>${data.numberOfRepos}</p>
                         </div>
                     </div>
                     <div class="col">
                         <div class="card">
                             <h6>Followers</h6>
-                            <p>${userInfo.numberOfFollowers}</p>
+                            <p>${data.numberOfFollowers}</p>
                         </div>
                     </div>
                 </div>
@@ -261,13 +243,13 @@ function generateHTML(userInfo, profileImg, userName, userLocation, userGitProfi
                     <div class="col">
                         <div class="card">
                             <h6>Github Stars</h6>
-                            <p>${userStars}</p>
+                            <p>${data.stars}</p>
                         </div>
                     </div>
                     <div class="col">
                         <div class="card">
                             <h6>Following</h6>
-                            <p>${userInfo.numberOfFollowing}</p>
+                            <p>${data.numberOfFollowing}</p>
                         </div>
                     </div>
                 </div>
@@ -277,4 +259,7 @@ function generateHTML(userInfo, profileImg, userName, userLocation, userGitProfi
         </body>`;
 }
 
-module.exports = { generateHTML }
+module.exports = {
+    colors: colors,
+    generateHTML: generateHTML,
+}
