@@ -4,6 +4,7 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
 const axios = require("axios");
+const util = require("util");
 const generateHTML = require("./generateHTML");
 // const HTMLtoPDF = require("html-pdf")
 
@@ -12,30 +13,32 @@ const generateHTML = require("./generateHTML");
 // Promises                            
 //===========//
 
-// const readFileAsync = util.promisify(fs.readFile);
-// const writeFileAsync = util.promisify(fs.writeFile);
+const readFileAsync = util.promisify(fs.readFile);
+const writeFileAsync = util.promisify(fs.writeFile);
+const appendFileAsync = util.promisify(fs.appendFile);
 
 
 //========================================================================//
 // These are constant variable that we will need to develop our PDF file                 
 //========================================================================//
-// const profileImg;
-// const userName;
-// const userLocation;
-// const userGitProfile;
-// const userBlog;
-// const userBio;
-// const numberOfRepos;
-// const numberOfFollowers;
-// const numberOfFollowing;
+let userInfo;
 
-//=======================================================//
+let profileImg;
+let userName;
+let userLocation;
+let userGitProfile;
+let userBlog;
+let userBio;
+let numberOfRepos;
+let numberOfFollowers;
+let numberOfFollowing;
+let userStars;
+
+//=======================================================
 //  Prompt user to get github username and favorite color                 
-//=======================================================//
-
-
-inquirer
-    .prompt([{
+//=======================================================
+function promptUser() {
+    return inquirer.prompt([{
             type: "input",
             message: "Enter your GitHub username:",
             name: "username"
@@ -43,77 +46,100 @@ inquirer
         {
             type: "rawlist",
             message: "pick a color",
-            choices: ["Green", "Blue", "Pink", "Red"],
+            choices: ["green", "blue", "pink", "red"],
             name: "color"
         }
     ])
-    .then(function(userInput) {
-        // console.log(userInput);
-        //================================================
-        // create variables for api and store user inputs
-        //=================================================
-        const gitHubLogin = userInput.username;
-        const gitHubJSON = gitHubLogin + ".json";
-        const color = userInput.color;
-
-        //================================================
-        //Write a function that will create a new document
-        //================================================
-        fs.writeFile(gitHubJSON, JSON.stringify(userInput, null, '\t'), function(err) {
-            if (err) {
-                return console.log(err);
-            }
-
-            const queryUrl = "https://api.github.com/users/" + gitHubLogin;
-            const queryStarUrl = "https://api.github.com/users/" + gitHubLogin + "/starred";
-            //====================================================
-            //Run gitHubData function to retrieve user information
-            //====================================================
-            gitHubData(queryUrl);
-
-            //=====================================================
-            //Run gitHubStars function to get remaining github data
-            //=====================================================
-            gitHubStars(queryStarUrl);
-
-        });
-
-    });
-
-function gitHubStars(queryStarUrl) {
-    axios
-        .get(queryStarUrl)
-        .then(function(res) {
-            let userStars = res.data.length;
-            console.log(userStars);
-        })
-        .catch(function(err) {
-            console.log(err);
-        })
 }
 
 function gitHubData(queryUrl) {
     axios
         .get(queryUrl)
         .then(function(res) {
-
-            let profileImg = res.data.avatar_url + ".png";
-            let userName = res.data.login;
-            let userLocation = res.data.location;
-            let userGitProfile = res.data.html_url;
-            let userBlog = res.data.blog;
-            let userBio = res.data.bio;
-            let numberOfRepos = res.data.public_repos;
-            let numberOfFollowers = res.data.followers;
-            let numberOfFollowing = res.data.following;
-            console.log(profileImg, userName, userLocation, userGitProfile, userBlog, userBio, numberOfRepos, numberOfFollowers, numberOfFollowing);
-
+            // console.log("Fetching user info.....");
+            userInfo = {
+                profileImg: res.data.avatar_url + ".png",
+                userName: res.data.login,
+                userLocation: res.data.location,
+                userGitProfile: res.data.html_url,
+                userBlog: res.data.blog,
+                userBio: res.data.bio,
+                numberOfRepos: res.data.public_repos,
+                numberOfFollowers: res.data.followers,
+                numberOfFollowing: res.data.following
+            }
+            console.log("Returning user info.....");
+            return userInfo;
 
         })
         .catch(function(err) {
             console.log(err);
         })
 }
+
+function gitHubStars(queryStarUrl) {
+    axios
+        .get(queryStarUrl)
+        .then(function(res) {
+            userStars = res.data.length;
+            console.log("Returning user stars.....");
+            return userStars;
+        })
+        .catch(function(err) {
+            console.log(err);
+        })
+}
+
+
+
+promptUser()
+    .then(function(userInput) {
+        //================================================
+        // create variables for api and store user inputs
+        //=================================================
+        // console.log(userInput);
+        const gitHubLogin = userInput.username;
+        const gitHubJSON = gitHubLogin + ".json";
+        const color = userInput.color;
+        // const html = generateHTML.generateHTML(userInfo, profileImg, userName, userLocation, userGitProfile, userBlog, userBio, numberOfRepos, numberOfFollowers, numberOfFollowing, userStars);
+
+        //================================================
+        //Write a function that will create a new document
+        //================================================
+
+
+        //===============
+        //github queries
+        //===============
+        const queryUrl = `https://api.github.com/users/${gitHubLogin}`
+        const queryStarUrl = `https://api.github.com/users/${gitHubLogin}/starred`
+
+        //====================================================
+        //Run gitHubData function to retrieve user information
+        //====================================================
+        gitHubData(queryUrl);
+
+        //=====================================================
+        //Run gitHubStars function to get remaining github data
+        //=====================================================
+        gitHubStars(queryStarUrl);
+
+        //=======================
+        //Generate HTML Document
+        //=======================
+
+
+    });
+
+
+
+
+// writeFileAsync(gitHubJSON, JSON.stringify(userInput, null, '\t'), function(err) {
+//     if (err) {
+//         return console.log(err);
+//     }
+
+// });
 
 
 
