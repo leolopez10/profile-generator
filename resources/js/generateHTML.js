@@ -216,7 +216,7 @@ function generateHTML(data) {
                     <div class="photo-header">
                         <img src=${data.profileImg}>
                         <h1>Hi!</h1>
-                        <h2>My Hello, my name is ${data.name}</h2>
+                        <h2>My name is ${data.name}</h2>
                         <p>${data.userLocation}</p>
                     </div>
                 </header>
